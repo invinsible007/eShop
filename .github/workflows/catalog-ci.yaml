@@ -10,10 +10,13 @@ on:
     paths:
       - "src/Catalog.API/**"
       - ".github/workflows/catalog-ci.yaml"
+  workflow_dispatch: 
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eShop
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eShop-catalog
   DOTNET_VERSION: "10.0.x"
+  SERVICE_PROJECT_FILE: src/Catalog.API/Catalog.API.csproj
+  SERVIC_TEST_FILE: tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj
 
 jobs:
   build-and-test:
@@ -33,13 +36,17 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore Dependencies
-        run: dotnet restore src/Catalog.API/Catalog.API.csproj
+        run: |
+          dotnet restore ${{env.SERVICE_PROJECT_FILE}}
+          dotnet restore ${{env.SERVICE_TEST_FILE}}
 
       - name: Build Solution
-        run: dotnet build src/Catalog.API/Catalog.API.csproj --configuration Release --no-restore
+        run: |
+          dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
+          dotnet build ${{env.SERVICE_TEST_FILE}} --configuration Release --no-restore        
 
       - name: Run Functional Tests
-        run: dotnet test tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj --configuration Release --no-build --verbosity normal
+        run: dotnet test ${{env.SERVICE_TEST_FILE}} --configuration Release --no-build --verbosity normal
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -48,7 +55,7 @@ jobs:
           path: "**/TestResults/*.trx"
       
       - name: Publish Application Artifacts
-        run: dotnet publish src/Catalog.API/Catalog.API.csproj -c Release -o ./publish
+        run: dotnet publish ${{env.SERVICE_PROJECT_FILE}} -c Release -o ./publish
       
       - name: Upload Build Artifacts to GitHub
         uses: actions/upload-artifact@v4
@@ -82,7 +89,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore Dependencies
-        run: dotnet restore eShopOnWeb.slnx
+        run: dotnet restore ${{env.SERVICE_PROJECT_FILE}}
 
       - name: Install Snyk CLI
         run: npm install -g snyk
@@ -93,7 +100,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk auth ${{secrets.SNYK_TOKEN}}
-          snyk test --file=src/Web/obj/project.assets.json --severity-threshold=high --sarif-file-output=snyk.sarif
+          snyk test --file=${{env.SERVICE_PROJECT_FILE}} --severity-threshold=high --sarif-file-output=snyk.sarif
   
   docker-build-push:
     name: Build & Push Docker Image
