@@ -16,7 +16,7 @@ env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eShop-catalog
   DOTNET_VERSION: "10.0.x"
   SERVICE_PROJECT_FILE: src/Catalog.API/Catalog.API.csproj
-  SERVIC_TEST_FILE: tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj
+  SERVICE_TEST_FILE: tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj
 
 jobs:
   build-and-test:
