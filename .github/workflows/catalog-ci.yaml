@@ -184,7 +184,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk auth ${SNYK_TOKEN}
-          snyk container test ${{ env.IMAGE_NAME }}:${{ needs.docker-build-push.outputs.image_tag }} --file=Dockerfile --severity-threshold=high --sarif-file-output=snyk.sarif
+          snyk container test ${{ env.IMAGE_NAME }}:${{ needs.docker-build-push.outputs.image_tag }} --file=${{env.SERVICE_DOCKERFILE}} --severity-threshold=high --sarif-file-output=snyk.sarif
 
       - name: Upload Snyk report as sarif 
         uses: github/codeql-action/upload-sarif@v4
