@@ -12,6 +12,7 @@ WORKDIR /src
 
 COPY ["*.props", "./"]
 COPY ["*.json", "./"]
+
 COPY ["src/Catalog.API/Catalog.API.csproj", "src/Catalog.API/"]
 COPY ["src/EventBusRabbitMQ/EventBusRabbitMQ.csproj", "src/EventBusRabbitMQ/"]
 COPY ["src/IntegrationEventLogEF/IntegrationEventLogEF.csproj", "src/IntegrationEventLogEF/"]
@@ -23,6 +24,10 @@ RUN dotnet restore "src/Catalog.API/Catalog.API.csproj"
 
 # Copy full application source code
 COPY ["src/Catalog.API/", "src/Catalog.API/"]
+COPY ["src/EventBusRabbitMQ/", "src/EventBusRabbitMQ/"]
+COPY ["src/IntegrationEventLogEF/", "src/IntegrationEventLogEF/"]
+COPY ["src/eShop.ServiceDefaults/", "src/eShop.ServiceDefaults/"]
+
 WORKDIR "/src/src/Catalog.API"
 
 # Stage 3: Publish Application
