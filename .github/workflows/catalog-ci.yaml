@@ -17,7 +17,7 @@ env:
   DOTNET_VERSION: "10.0.x"
   SERVICE_PROJECT_FILE: src/Catalog.API/Catalog.API.csproj
   SERVICE_TEST_FILE: tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj
-
+  PROJECT_ASSESTS_FILE: src/Catalog.API/obj/project.assets.json
 jobs:
   build-and-test:
     name: Build & Test
@@ -66,7 +66,7 @@ jobs:
       - name: Pack and Publish NuGet Packages to GitHub Packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          dotnet pack src/ApplicationCore/ApplicationCore.csproj -c Release -o ./nuget
+          dotnet pack ${{SERVICE_PROJECT_FILE}} -c Release -o ./nuget
           dotnet nuget push ./nuget/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
   security-scan:
@@ -100,7 +100,14 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk auth ${{secrets.SNYK_TOKEN}}
-          snyk test --file=${{env.SERVICE_PROJECT_FILE}} --severity-threshold=high --sarif-file-output=snyk.sarif
+          snyk test --file=${{env.PROJECT_ASSESTS_FILE}} --severity-threshold=high --sarif-file-output=snyk.sarif
+
+      - name: Upload Snyk Open Source SARIF report
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with: 
+          sarif_file: snyk.sarif
+          category: open-source-scan
   
   docker-build-push:
     name: Build & Push Docker Image
