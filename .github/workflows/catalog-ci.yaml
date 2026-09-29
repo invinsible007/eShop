@@ -5,11 +5,13 @@ on:
     paths:
       - "src/Catalog.API/**"
       - ".github/workflows/catalog-ci.yaml"
+      - "Dockerfiles/catalog.Dockerfile"
   pull_request:
     branches: [main, staging]
     paths:
       - "src/Catalog.API/**"
       - ".github/workflows/catalog-ci.yaml"
+      - "Dockerfiles/catalog.Dockerfile"
   workflow_dispatch: 
 
 env:
@@ -47,7 +49,7 @@ jobs:
           dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
           dotnet build ${{env.SERVICE_TEST_FILE}} --configuration Release --no-restore        
 
-      - name: Run Functional Tests
+      - name: Run Functional Test
         run: dotnet test ${{env.SERVICE_TEST_FILE}} --configuration Release --no-build --verbosity normal
 
       - name: Upload Test Results
