@@ -17,7 +17,7 @@ COPY ["src/Catalog.API/Catalog.API.csproj", "src/Catalog.API/"]
 COPY ["src/EventBusRabbitMQ/EventBusRabbitMQ.csproj", "src/EventBusRabbitMQ/"]
 COPY ["src/IntegrationEventLogEF/IntegrationEventLogEF.csproj", "src/IntegrationEventLogEF/"]
 COPY ["src/eShop.ServiceDefaults/eShop.ServiceDefaults.csproj", "src/eShop.ServiceDefaults/"]
-
+COPY ["src/EventBus/EventBus.csproj", "src/EventBus/"]
 
 # Restore dependencies for Web.csproj
 RUN dotnet restore "src/Catalog.API/Catalog.API.csproj"
@@ -27,6 +27,8 @@ COPY ["src/Catalog.API/", "src/Catalog.API/"]
 COPY ["src/EventBusRabbitMQ/", "src/EventBusRabbitMQ/"]
 COPY ["src/IntegrationEventLogEF/", "src/IntegrationEventLogEF/"]
 COPY ["src/eShop.ServiceDefaults/", "src/eShop.ServiceDefaults/"]
+COPY ["src/EventBus/", "src/EventBus/"]
+COPY ["src/Shared/", "src/Shared/"]
 
 WORKDIR "/src/src/Catalog.API"
 
