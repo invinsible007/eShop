@@ -13,6 +13,10 @@ WORKDIR /src
 COPY ["*.props", "./"]
 COPY ["*.json", "./"]
 COPY ["src/Catalog.API/Catalog.API.csproj", "src/Catalog.API/"]
+COPY ["src/EventBusRabbitMQ/EventBusRabbitMQ.csproj", "src/EventBusRabbitMQ/"]
+COPY ["src/IntegrationEventLogEF/IntegrationEventLogEF.csproj", "src/IntegrationEventLogEF/"]
+COPY ["src/eShop.ServiceDefaults/eShop.ServiceDefaults.csproj", "src/eShop.ServiceDefaults/"]
+
 
 # Restore dependencies for Web.csproj
 RUN dotnet restore "src/Catalog.API/Catalog.API.csproj"
