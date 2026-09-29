@@ -15,12 +15,13 @@ on:
   workflow_dispatch: 
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eShop-catalog
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eshop-catalog
   DOTNET_VERSION: "10.0.x"
   SERVICE_PROJECT_FILE: src/Catalog.API/Catalog.API.csproj
   SERVICE_TEST_FILE: tests/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj
   PROJECT_ASSESTS_FILE: src/Catalog.API/obj/project.assets.json
   SERVICE_DOCKERFILE: ./Dockerfiles/catalog.Dockerfile
+  SNYK_SARIF: catalog-snyk.sarif
 
 jobs:
   build-and-test:
@@ -184,12 +185,12 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk auth ${SNYK_TOKEN}
-          snyk container test ${{ env.IMAGE_NAME }}:${{ needs.docker-build-push.outputs.image_tag }} --file=${{env.SERVICE_DOCKERFILE}} --severity-threshold=high --sarif-file-output=snyk.sarif
+          snyk container test ${{ env.IMAGE_NAME }}:${{ needs.docker-build-push.outputs.image_tag }} --file=${{env.SERVICE_DOCKERFILE}} --severity-threshold=high --sarif-file-output=${{env.SNYK_SARIF}}
 
       - name: Upload Snyk report as sarif 
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: snyk.sarif
+          sarif_file: ${{env.SNYK_SARIF}}
           category: container-scan
         
 
