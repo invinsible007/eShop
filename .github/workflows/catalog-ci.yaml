@@ -51,13 +51,16 @@ jobs:
           dotnet build ${{env.SERVICE_TEST_FILE}} --configuration Release --no-restore        
 
       - name: Run Functional Test
-        run: dotnet test ${{env.SERVICE_TEST_FILE}} --configuration Release --no-build --verbosity normal
+        run: |
+          dotnet test ${{env.SERVICE_TEST_FILE}} --configuration Release --no-build --verbosity normal \
+            --logger "trx;LogFileName=functional-tests.trx" --results-directory ./TestResults
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-results
-          path: "**/TestResults/*.trx"
+          path: "./TestResults/*.trx"
       
       - name: Publish Application Artifacts
         run: dotnet publish ${{env.SERVICE_PROJECT_FILE}} -c Release -o ./publish
@@ -105,14 +108,13 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk auth ${{secrets.SNYK_TOKEN}}
-          snyk test --severity-threshold=high --sarif-file-output=snyk.sarif
-          # snyk test --file=${{env.SERVICE_PROJECT_FILE}} --package-manager=nuget --severity-threshold=high --sarif-file-output=snyk.sarif
-
+          snyk test --severity-threshold=high --sarif-file-output=${{env.SNYK_SARIF}}
+          
       - name: Upload Snyk Open Source SARIF report
         uses: github/codeql-action/upload-sarif@v4
         if: always()
         with: 
-          sarif_file: snyk.sarif
+          sarif_file: ${{env.SNYK_SARIF}}
           category: open-source-scan
   
   docker-build-push:
