@@ -47,12 +47,10 @@ jobs:
       - name: Restore Dependencies
         run: |
           dotnet restore ${{env.SERVICE_PROJECT_FILE}}
-          dotnet restore ${{env.SERVICE_TEST_FILE}}
 
       - name: Build Solution
         run: |
-          dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
-          dotnet build ${{env.SERVICE_TEST_FILE}} --configuration Release --no-restore        
+          dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore     
 
       - name: Publish Application Artifacts
         run: dotnet publish ${{env.SERVICE_PROJECT_FILE}} -c Release -o ./publish
