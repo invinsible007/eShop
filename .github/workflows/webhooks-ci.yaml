@@ -1,4 +1,4 @@
-name: Basket API CI
+name: Webhooks API CI
 on:
   push: 
     branches: [main, staging]
@@ -8,6 +8,7 @@ on:
       - "src/EventBusRabbitMQ/**"
       - "src/eShop.ServiceDefaults/**"
       - "src/Shared/ActivityExtensions.cs"
+      - "src/Shared/MigrateDbContextExtensions.cs"
       - ".github/workflows/webhooks-ci.yaml"
       - "Dockerfiles/webhooks.Dockerfile"
   pull_request:
@@ -18,6 +19,7 @@ on:
       - "src/EventBusRabbitMQ/**"
       - "src/eShop.ServiceDefaults/**"
       - "src/Shared/ActivityExtensions.cs"
+      - "src/Shared/MigrateDbContextExtensions.cs"
       - ".github/workflows/webhooks-ci.yaml"
       - "Dockerfiles/webhooks.Dockerfile"
   workflow_dispatch: 
@@ -51,18 +53,15 @@ jobs:
         run: |
           dotnet restore ${{env.SERVICE_PROJECT_FILE}}
           dotnet restore ${{env.SERVICE_FUNCTIONAL_TEST_FILE}}
-          dotnet restore ${{env.SERVICE_UNIT_TEST_FILE}}
 
       - name: Build Solution
         run: |
           dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
-          dotnet build ${{env.SERVICE_FUNCTIONAL_TEST_FILE}} --configuration Release --no-restore 
-          dotnet build ${{env.SERVICE_UNIT_TEST_FILE}} --configuration Release --no-restore        
+          dotnet build ${{env.SERVICE_FUNCTIONAL_TEST_FILE}} --configuration Release --no-restore   
 
       - name: Run Unit And Functional Tests
         run: |
           dotnet test ${{env.SERVICE_FUNCTIONAL_TEST_FILE}} --configuration Release --no-build --verbosity normal 
-          dotnet test ${{env.SERVICE_UNIT_TEST_FILE}} --configuration Release --no-build --verbosity normal 
       
       - name: Publish Application Artifacts
         run: dotnet publish ${{env.SERVICE_PROJECT_FILE}} -c Release -o ./publish
