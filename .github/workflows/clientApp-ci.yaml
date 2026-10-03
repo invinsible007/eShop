@@ -44,12 +44,12 @@ jobs:
       
       - name: Restore Dependencies
         run: |
-          dotnet restore ${{env.SERVICE_PROJECT_FILE}} -f net10.0-android
+          dotnet restore ${{env.SERVICE_PROJECT_FILE}} --framework net10.0-android
           dotnet restore ${{env.SERVICE_UNIT_TEST_FILE}}
 
       - name: Build Solution
         run: |
-          dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
+          dotnet build ${{env.SERVICE_PROJECT_FILE}} --framework net10.0-android --configuration Release --no-restore
           dotnet build ${{env.SERVICE_UNIT_TEST_FILE}} --configuration Release --no-restore   
 
       - name: Run Unit And Functional Tests
