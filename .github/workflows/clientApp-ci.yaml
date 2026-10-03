@@ -44,7 +44,7 @@ jobs:
       
       - name: Restore Dependencies
         run: |
-          dotnet restore ${{env.SERVICE_PROJECT_FILE}} --framework net10.0-android
+          dotnet restore ${{ env.SERVICE_PROJECT_FILE }} -p:TargetFramework=net10.0-android
           dotnet restore ${{env.SERVICE_UNIT_TEST_FILE}}
 
       - name: Build Solution
