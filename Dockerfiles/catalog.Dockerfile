@@ -1,5 +1,6 @@
 # Stage 1: Runtime Base
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update && apt-get upgrade -y openssl libssl3t64 && rm -rf /var/lib/apt/lists/*
 USER app
 WORKDIR /app
 EXPOSE 8080
