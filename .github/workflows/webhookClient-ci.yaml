@@ -1,36 +1,28 @@
-name: Webhooks API CI
+name: Web App CI
 on:
   push: 
     branches: [main, staging]
     paths:
-      - "src/Webhooks.API/**"
-      - "src/EventBus/**"
-      - "src/EventBusRabbitMQ/**"
+      - "src/WebhookClient/**"
       - "src/eShop.ServiceDefaults/**"
-      - "src/Shared/ActivityExtensions.cs"
-      - "src/Shared/MigrateDbContextExtensions.cs"
-      - ".github/workflows/webhooks-ci.yaml"
-      - "Dockerfiles/webhooks.Dockerfile"
+      - ".github/workflows/webhookClient-ci.yaml"
+      - "Dockerfiles/webhookClient.Dockerfile"
   pull_request:
     branches: [main, staging]
     paths:
-      - "src/Webhooks.API/**"
-      - "src/EventBus/**"
-      - "src/EventBusRabbitMQ/**"
+      - "src/WebhookClient/**"
       - "src/eShop.ServiceDefaults/**"
-      - "src/Shared/ActivityExtensions.cs"
-      - "src/Shared/MigrateDbContextExtensions.cs"
-      - ".github/workflows/webhooks-ci.yaml"
-      - "Dockerfiles/webhooks.Dockerfile"
+      - ".github/workflows/webhookClient-ci.yaml"
+      - "Dockerfiles/webhookClient.Dockerfile"
   workflow_dispatch: 
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eshop-webhooks
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eshop-webhook-client
   DOTNET_VERSION: "10.0.x" 
-  SERVICE_PROJECT_FILE: src/Webhooks.API/Webhooks.API.csproj
-  SERVICE_FUNCTIONAL_TEST_FILE: tests/Webhooks.FunctionalTests/Webhooks.FunctionalTests.csproj
-  SERVICE_DOCKERFILE: ./Dockerfiles/webhooks.Dockerfile
-  SNYK_SARIF: webhooks-snyk.sarif
+  SERVICE_PROJECT_FILE: src/WebClient/WebClient.csproj
+  SERVICE_UNIT_TEST_FILE: tests/Application.UnitTests/Application.UnitTests.csproj
+  SERVICE_DOCKERFILE: ./Dockerfiles/webhookClient.Dockerfile
+  SNYK_SARIF: webhookClient-snyk.sarif
 
 jobs:
   build-and-test:
@@ -52,16 +44,16 @@ jobs:
       - name: Restore Dependencies
         run: |
           dotnet restore ${{env.SERVICE_PROJECT_FILE}}
-          dotnet restore ${{env.SERVICE_FUNCTIONAL_TEST_FILE}}
+          dotnet restore ${{env.SERVICE_UNIT_TEST_FILE}}
 
       - name: Build Solution
         run: |
           dotnet build ${{env.SERVICE_PROJECT_FILE}} --configuration Release --no-restore
-          dotnet build ${{env.SERVICE_FUNCTIONAL_TEST_FILE}} --configuration Release --no-restore   
+          dotnet build ${{env.SERVICE_UNIT_TEST_FILE}} --configuration Release --no-restore   
 
       - name: Run Unit And Functional Tests
         run: |
-          dotnet test ${{env.SERVICE_FUNCTIONAL_TEST_FILE}} --configuration Release --no-build --verbosity normal 
+          dotnet test ${{env.SERVICE_UNIT_TEST_FILE}} --configuration Release --no-build --verbosity normal 
       
       - name: Publish Application Artifacts
         run: dotnet publish ${{env.SERVICE_PROJECT_FILE}} -c Release -o ./publish
@@ -184,11 +176,11 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: ./Dockerfiles/webhooks.Dockerfile
+          context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           
-  
+
