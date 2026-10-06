@@ -19,7 +19,7 @@ on:
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME}}/eshop-webhook-client
   DOTNET_VERSION: "10.0.x" 
-  SERVICE_PROJECT_FILE: src/WebClient/WebClient.csproj
+  SERVICE_PROJECT_FILE: src/WebhookClient/WebhookClient.csproj
   SERVICE_UNIT_TEST_FILE: tests/Application.UnitTests/Application.UnitTests.csproj
   SERVICE_DOCKERFILE: ./Dockerfiles/webhookClient.Dockerfile
   SNYK_SARIF: webhookClient-snyk.sarif
