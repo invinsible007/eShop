@@ -1,5 +1,6 @@
 # Stage 1: Runtime Base
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update && apt-get upgrade -y openssl libssl3t64 && rm -rf /var/lib/apt/lists/*
 USER app
 WORKDIR /app
 EXPOSE 8080
@@ -17,6 +18,7 @@ COPY ["src/OrderProcessor/OrderProcessor.csproj", "src/OrderProcessor/"]
 COPY ["src/EventBusRabbitMQ/EventBusRabbitMQ.csproj", "src/EventBusRabbitMQ/"]
 COPY ["src/eShop.ServiceDefaults/eShop.ServiceDefaults.csproj", "src/eShop.ServiceDefaults/"]
 COPY ["src/EventBus/EventBus.csproj", "src/EventBus/"]
+COPY ["src/Shared/", "src/Shared/"]
 
 # Restore dependencies for Web.csproj
 RUN dotnet restore "src/OrderProcessor/OrderProcessor.csproj"
