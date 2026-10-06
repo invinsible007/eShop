@@ -11,6 +11,7 @@ on:
       - "src/WebAppComponents/**"
       - ".github/workflows/webApp-ci.yaml"
       - "Dockerfiles/webApp.Dockerfile"
+      - "src/Basket.API/Proto/basket.proto"
   pull_request:
     branches: [main, staging]
     paths:
@@ -181,14 +182,8 @@ jobs:
           sarif_file: ${{env.SNYK_SARIF}}
           category: container-scan
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Push Docker image
+        run: |
+          docker push --all-tags ${{env.IMAGE_NAME}}
           
 
