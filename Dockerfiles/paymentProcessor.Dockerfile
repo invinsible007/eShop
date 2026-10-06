@@ -1,5 +1,6 @@
 # Stage 1: Runtime Base
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update && apt-get upgrade -y openssl libssl3t64 && rm -rf /var/lib/apt/lists/*
 USER app
 WORKDIR /app
 EXPOSE 8080
@@ -26,6 +27,7 @@ COPY ["src/PaymentProcessor/", "src/PaymentProcessor/"]
 COPY ["src/EventBusRabbitMQ/", "src/EventBusRabbitMQ/"]
 COPY ["src/eShop.ServiceDefaults/", "src/eShop.ServiceDefaults/"]
 COPY ["src/EventBus/", "src/EventBus/"]
+COPY ["src/Shared/", "src/Shared/"]
 
 
 WORKDIR "/src/src/PaymentProcessor/"
